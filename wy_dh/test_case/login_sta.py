@@ -64,7 +64,7 @@ class loginTest(myunit.MyTest):
 
     # 用户名正确，密码正确
     def test_login5(self):
-        self.user_login_verify(username='root', password='123')
+        self.user_login_verify(username='周继成', password='12345678')
         function.insert_img(self.driver, 'test_login5.png')
 
 

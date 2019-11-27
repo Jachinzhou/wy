@@ -4,7 +4,7 @@ class Page(object):
     '''
     页面基础类，用于所有页面的继承
     '''
-    wy_url = 'http://192.168.18.148:8080/dhwy/passport/login'
+    wy_url = 'http://wy.dhwl66.com:8001/dhwy/passport/login'
 
     def __init__(self, selenium_driver, base_url=wy_url, parent=None):
         self.base_url = base_url

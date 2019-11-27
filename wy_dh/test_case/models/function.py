@@ -16,12 +16,18 @@ def insert_img(driver, file_name):
 if __name__ == '__main__':
     driver = webdriver.Chrome()
     driver.maximize_window()
-    driver.get('http://192.168.18.148:8080/dhwy/passport/login')
-    driver.find_element_by_id('username').send_keys('root')
-    driver.find_element_by_id('password').send_keys('')
-    driver.find_element_by_id('loginSub').click()
-    insert_img(driver, 'alert.png')
-    driver.switch_to.alert.accept()
+    driver.get('http://wy.dhwl66.com:8001/dhwy/passport/login')
+    try:
+        driver.find_element_by_id('username').send_keys('root')
+        driver.find_element_by_id('password').send_keys('')
+        driver.find_element_by_id('loginSub').click()
+        sleep(1)
+        insert_img(driver, 'alert.png')
+        sleep(1)
+        driver.switch_to.alert.accept()
+        driver.quit()
+    except Exception as msg:
+        insert_img(driver, 'alert.png')
+        print(1)
 
-    sleep(1)
-    driver.quit()
+
