@@ -6,14 +6,16 @@ import unittest
 import time
 import os
 
+
 def new_report(testreport):
     lists = os.listdir(testreport)
-    lists.sort(key=lambda fn: os.path.getmtime(testreport +'\\' + fn))
-    file_new = os.path.join(testreport,lists[-1])
-    print(file_new)
+    lists.sort(key=lambda fn: os.path.getmtime(testreport + '\\' + fn))
+    file_new = os.path.join(testreport, lists[-1])
+    # print(file_new)
     return file_new
 
-if  __name__ == '__main__':
+
+if __name__ == '__main__':
     now = time.strftime('%Y-%m-%d-%H_%M_%S')
     filename = './' + now + ' result.html'
     fp = open(filename, 'wb')

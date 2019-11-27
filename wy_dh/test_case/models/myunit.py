@@ -1,6 +1,7 @@
 from selenium import webdriver
 from .driver import brower
 import unittest
+from time import sleep
 import os
 
 class MyTest(unittest.TestCase):
@@ -8,7 +9,6 @@ class MyTest(unittest.TestCase):
         self.driver = brower()
         self.driver.implicitly_wait(10)
         self.driver.maximize_window()
-
 
     def tearDown(self):
         self.driver.quit()
