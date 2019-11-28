@@ -1,6 +1,7 @@
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium import webdriver
 from selenium.webdriver.common.by import By
-from .base import Page
+from wy_dh.test_case.page_obj.base import  Page
 from time import sleep
 
 
@@ -8,7 +9,7 @@ class login(Page):
     '''
     登陆
     '''
-    url = '/'
+    url = '/passport/login'
     wy_login_username_loc = (By.ID, 'username')
     wy_login_password_loc = (By.ID, 'password')
     wy_login_loginSub_loc = (By.ID, 'loginSub')
@@ -32,3 +33,9 @@ class login(Page):
     def login_alert(self):
         alert = self.driver.switch_to_alert()
         return alert
+
+if __name__ == '__main__':
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    driver.get('http://192.168.18.148:8080/dhwy/contracts/load')
+    login(driver).user_login('root','123')

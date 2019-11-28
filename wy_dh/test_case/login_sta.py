@@ -14,14 +14,6 @@ class loginTest(myunit.MyTest):
     def user_login_verify(self, username='', password=''):
         login(self.driver).user_login(username, password)
 
-    def alert_is_present(self):
-        try:
-            alert = self.driver.switch_to.alert
-            alert.text
-            return alert
-        except:
-            return False
-
     # 用户名正确，密码错误
     def test_login1(self):
         self.user_login_verify(username='root', password='1234')

@@ -1,10 +1,18 @@
 from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 class Page(object):
-    '''
-    页面基础类，用于所有页面的继承
-    '''
-    wy_url = 'http://wy.dhwl66.com:8001/dhwy/passport/login'
+    """
+    BasePage封装所有页面都公用的方法，例如driver, url ,FindElement等
+    """
+    # 初始化driver、url、pagetitle等
+    # 实例化BasePage类时，最先执行的就是__init__方法，该方法的入参，其实就是BasePage类的入参。
+    # __init__方法不能有返回值，只能返回None
+    # self只实例本身，相较于类Page而言。
+
+    wy_url = 'http://wy.dhwl66.com:8001/dhwy'
 
     def __init__(self, selenium_driver, base_url=wy_url, parent=None):
         self.base_url = base_url
@@ -18,8 +26,18 @@ class Page(object):
         print(url)
         # assert self.on_page(), 'Did not land on %s' % url
 
+    # 重写元素定位方法
     def find_element(self, *loc):
-        return self.driver.find_element(*loc)
+        # return self.driver.find_element(*loc)
+        try:
+            # 确保元素是可见的。
+            # 注意：以下入参为元组的元素，需要加*。Python存在这种特性，就是将入参放在元组里。
+            #      WebDriverWait(self.driver,10).until(lambda driver: driver.find_element(*loc).is_displayed())
+            # 注意：以下入参本身是元组，不需要加*
+            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(loc))
+            return self.driver.find_element(*loc)
+        except:
+            print(u"%s 页面中未能找到 %s 元素" % (self, loc))
 
     def find_elements(self, *loc):
         return self.driver.find_elements(*loc)
