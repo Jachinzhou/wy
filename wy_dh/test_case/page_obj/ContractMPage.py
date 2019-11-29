@@ -164,7 +164,7 @@ class ContractMPage(Page):
         self.find_element(*self.wy_partyC_loc).send_keys(partyC)
 
     def select_classification(self, classification):
-        self.find_element(*self.wy_classification_loc).select_by_visible_text(classification)
+        Select(self.find_element(*self.wy_classification_loc)).select_by_visible_text(classification)
 
     def input_coefficient(self, coefficient):
         self.find_element(*self.wy_coefficient_loc).send_keys(coefficient)
@@ -173,7 +173,7 @@ class ContractMPage(Page):
         self.find_element(*self.wy_area_loc).send_keys(area)
 
     def select_followPerson(self, followPerson):
-        self.find_element(*self.wy_signatory_loc).select_by_visible_text(followPerson)
+        Select(self.find_element(*self.wy_followPerson_loc)).select_by_visible_text(followPerson)
 
     def input_memo(self, memo):
         self.find_element(*self.wy_memo_loc).send_keys(memo)
@@ -306,17 +306,13 @@ class ContractMPage(Page):
         self.remove_readonly("signDate")
         self.input_signDate(signDate)
         sleep(2)
-        self.input_rent(rent)
-        self.remove_readonly("receiveDate")
-        self.input_receiveDate(receiveDate)
         self.input_deposit(deposit)
         self.input_partyA(partyA)
+        self.input_partyB(partyB)
+        self.input_partyC(partyC)
         self.select_classification(classification)
         self.input_area(area)
         self.select_followPerson(followPerson)
-        if catalog == '电费' or '房租+电费':
-            self.input_electricityFeeRate(electricityFeeRate)
-            self.input_electricityFeeCycle(electricityFeeCycle)
         self.select_account_tab()
         sleep(1)
         self.input_contact(contact)
@@ -370,8 +366,8 @@ if __name__ == '__main__':
                                         rent='2400',
                                         deposit='0',
                                         partyA='甲方',
-                                        partyB='',
-                                        partyC='',
+                                        partyB='中移铁通有限公司深圳分公司',
+                                        partyC='深圳市东恒网络科技有限公司',
                                         classification='对私',
                                         coefficient='1.15',
                                         area='233',

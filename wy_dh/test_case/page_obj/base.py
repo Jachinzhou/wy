@@ -40,7 +40,7 @@ class Page(object):
             print(u"%s 页面中未能找到 %s 元素" % (self, loc))
 
     def find_elements(self, *loc):
-        return self.driver.find_elements(*loc)
+        return self.driver.find_elements(*loc).clear()
 
     def open(self):
         self._open(self.url)
