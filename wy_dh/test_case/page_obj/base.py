@@ -50,3 +50,19 @@ class Page(object):
 
     def script(self, src):
         return self.driver.execute_script(src)
+
+    def remove_readonly(self, id):
+        js = 'document.getElementById("' + id + '").removeAttribute("readonly");'
+        # print(js)
+        return self.driver.execute_script(js)
+
+    def alert_accprt(self):
+        alert = self.driver.switch_to_alert()
+        text = alert.text
+        # print(text)
+        alert.accept()
+        return text
+
+
+if __name__ == '__main__':
+    Page.remove_readonly(webdriver, 'startTime')
