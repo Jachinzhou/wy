@@ -80,6 +80,36 @@ class ContractMPage(Page):
     wy_edit_contracts_loc = (By.XPATH, '/html/body/div[3]/div/div[2]/button[15]')  # 合同编辑按钮
     wy_payment_plan_tab_loc = (By.XPATH, '//*[@id="tabs"]/ul/li[4]/a')  # 合同付款计划tab
 
+    wy_tenementsname_query_loc = (By.XPATH, '//*[@id="queryForm"]/input[3]')  # 基站名称查询框
+
+    def query_tenementsname(self, tenementsname):
+        self.find_element(*self.wy_tenementsname_query_loc).send_keys(tenementsname)
+
+    wy_contactname_query_loc = (By.XPATH, '//*[@id="queryForm"]/input[5]')  # 合同名称查询框
+
+    def query_contactname(self, contactname):
+        self.find_element(*self.wy_contactname_query_loc).send_keys(contactname)
+
+    wy_query_loc = (By.XPATH, '//*[@id="queryForm"]/input[14]')  # 查询按钮
+
+    def query_button(self):
+        self.find_element(*self.wy_query_loc).click()
+
+    wy_contractsImgs_tab_loc = (By.XPATH, '//*[@id="tabs"]/ul/li[3]/a')  # 合同图片tab
+
+    def contractsImgs_tab(self):
+        self.find_element(*self.wy_contractsImgs_tab_loc).click()
+
+    wy_input_imgs_loc = (By.NAME, 'image')  # 图片上传按钮
+
+    def input_imgs(self, imgspath):
+        self.find_element(*self.wy_input_imgs_loc).send_keys(imgspath)
+
+    wy_contract_close_loc = (By.XPATH, '//*[@id="popwnd_Contracts_edit"]/div[1]/span[2]')  # 合同编辑界面关闭按钮
+
+    def close_contract(self):
+        self.find_element(*self.wy_contract_close_loc).click()
+
     def add_contracts_button(self):
         self.find_element(*self.wy_lfn_add_contracts_loc).click()
 
@@ -298,17 +328,18 @@ class ContractMPage(Page):
         self.input_useEndTime(useEndTime)
         self.add_tenementName()
         # 添加基站
-        # sleep(1)
-        # self.add_tenement_Name()
-        # sleep(1)
-        # self.input_tenements_name(tenements_name)
-        # self.input_tenements_address(tenements_address)
-        # self.input_tenements_contact(tenements_contact)
-        # self.input_tenements_mobile(tenements_mobile)
-        # self.input_tenements_payPurpose(tenements_payPurpose)
-        # self.add_tenements()
-        # sleep(1)
-        # self.alert_accprt()
+        sleep(1)
+        self.add_tenement_Name()
+        sleep(1)
+        self.input_tenements_name(tenements_name)
+        self.input_tenements_address(tenements_address)
+        self.input_tenements_contact(tenements_contact)
+        self.input_tenements_mobile(tenements_mobile)
+        self.input_tenements_payPurpose(tenements_payPurpose)
+        self.add_tenements()
+        sleep(1)
+        self.alert_accprt()
+        sleep(1)
         self.selected_tenements()
         sleep(1)
         self.select_button()
@@ -366,12 +397,35 @@ class ContractMPage(Page):
         self.edit_contracts()
         self.payment_plan_click()
         function.insert_img(self.driver, 'payment_plan_' + amount + '.png')
+        sleep(1)
+        self.close_contract()
+
+    def upImgs(self,
+               tenementsname='tenementsname',
+               contactname='contactname',
+               imgspath='imgspath'
+               ):
+        self.query_tenementsname(tenementsname)
+        self.query_contactname(contactname)
+        self.query_button()
+        sleep(1)
+        self.selected_contract()
+        self.edit_contracts()
+        sleep(1)
+        self.contractsImgs_tab()
+        self.input_imgs(imgspath)
+        sleep(2)
+        self.contract_submit()
+        sleep(1)
+        self.alert_accprt()
+        self.close_contract()
 
 
 if __name__ == '__main__':
     e = 'C:/Users/admin/PycharmProjects/wy/wy_dh/data/合同台账2019-12-02.xlsx'
     reader = ExcelReader(e, title_line=True)
     amount = '1'
+    i = 3
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get('http://wy.dhwl66.com:8001/dhwy/passport/login')
@@ -380,45 +434,51 @@ if __name__ == '__main__':
     driver.find_element_by_id('loginSub').click()
     sleep(1)
     driver.get('http://wy.dhwl66.com:8001/dhwy/contracts/load')
-    ContractMPage(driver).add_contracts(code=reader.data[0]['东恒-业主合同编号'],  # 合同编号
-                                        oldCode=reader.data[0]['原合同编号'],  # 原合同编号
-                                        catalog=reader.data[0]['合同分类2'],  # 合同分类2
-                                        startTime=reader.data[0]['合同起时间'],  # 合同起时间
-                                        endTime=reader.data[0]['合同止时间'],  # 合同止时间
-                                        useStartTime=reader.data[0]['租金首次支付开始时间'],  # 租金首次支付开始时间
-                                        useEndTime=reader.data[0]['租金首次支付结束时间'],  # 租金首次支付结束时间
-                                        tenements_name=reader.data[0]['基站名称'],  # 基站名称
-                                        tenements_address='地址',
-                                        tenements_contact='联系人张三',
-                                        tenements_mobile='15369585545',
-                                        tenements_payPurpose='基站名称缩略名',
-                                        signatory='签订人',
-                                        annualAmount='1200',
-                                        firstRent='1200',
-                                        rentCycle='12',
-                                        firstCycle='12',
-                                        receiveDate='2019-6-01',
-                                        signDate='2019-07-11',
-                                        rent='2400',
-                                        deposit='0',
-                                        partyA='甲方',
-                                        partyB='中移铁通有限公司深圳分公司',
-                                        partyC='深圳市东恒网络科技有限公司',
-                                        classification='对私',
-                                        coefficient='1.15',
-                                        area='233',
-                                        followPerson='俞夏雨',
-                                        memo='memo',
-                                        electricityFeeRate='1.2345',
-                                        electricityFeeCycle='1',
-                                        contact='联系人李四',
-                                        mobile='15364995954',
-                                        eleAccountName1='吴远新',
-                                        eleBankName1='招商银行深圳龙岗碧湖支行',
-                                        eleBankAccountNo1='6214867800913668',
-                                        rentAccountName1='邓海新',
-                                        rentBankName1='农业银行深圳龙岗支行',
-                                        rentBankAccountNo1='6228480120631299316'
-                                        )
+    # ContractMPage(driver).add_contracts(code=reader.data[i]['东恒-业主合同编号'] + str(random.randint(000, 999)),  # 合同编号
+    #                                     oldCode=reader.data[i]['原合同编号'],  # 原合同编号
+    #                                     catalog=reader.data[i]['合同分类2'],  # 合同分类2
+    #                                     startTime=reader.data[i]['合同起时间'],  # 合同起时间
+    #                                     endTime=reader.data[i]['合同止时间'],  # 合同止时间
+    #                                     useStartTime=reader.data[i]['租金首次支付开始时间'],  # 租金首次支付开始时间
+    #                                     useEndTime=reader.data[i]['租金首次支付结束时间'],  # 租金首次支付结束时间
+    #                                     tenements_name=reader.data[i]['基站名称'],  # 基站名称
+    #                                     tenements_address=reader.data[i]['租赁地址'],  # 地址
+    #                                     tenements_contact=reader.data[i]['出租方联系人'],  # 联系人
+    #                                     tenements_mobile=reader.data[i]['联系电话'],  # 电话
+    #                                     tenements_payPurpose=reader.data[i]['基站缩略名称'],  # 基站名称缩略名
+    #                                     signatory='签订人',  # 签订人
+    #                                     annualAmount=reader.data[i]['业主合同金额(元/年)'],  # 合同年金额
+    #                                     firstRent=reader.data[i]['业主租金首次支付金额'],  # 首次支付金额
+    #                                     rentCycle=reader.data[i]['业主租金后续支付周期（月）'],  # 后续支付周期
+    #                                     firstCycle=reader.data[i]['租金首次支付周期（月)'],  # 首次支付周期
+    #                                     receiveDate=reader.data[i]['收单日期'],  # 收单日期
+    #                                     signDate=reader.data[i]['A合同签订时间'],  # 签订日期
+    #                                     rent=reader.data[i]['业主合同总金额'],  # 合同总金额
+    #                                     deposit=reader.data[i]['押金'],  # 押金
+    #                                     partyA=reader.data[i]['出租方'],  # 甲方
+    #                                     partyB='',  # 乙方
+    #                                     partyC='',  # 丙方
+    #                                     classification=reader.data[i]['业主分类'],  # 对公对私类别
+    #                                     coefficient='',  # 租金转化系数
+    #                                     area=reader.data[i]['面积'],  # 面积
+    #                                     followPerson=reader.data[i]['跟进人'],  # 跟进人
+    #                                     memo=reader.data[i]['A合同备注'],  # 备注
+    #                                     electricityFeeRate=reader.data[i]['业主电费费率（元/度）'],  # 电费费率
+    #                                     electricityFeeCycle=reader.data[i]['电费缴费周期（月）'],  # 电费的缴费周期
+    #                                     contact=reader.data[i]['出租方联系人'],  # 出租方联系人
+    #                                     mobile=reader.data[i]['联系电话'],  # 联系电话
+    #                                     eleAccountName1=reader.data[i]['业主户名'],  # 电费业主账户户名1
+    #                                     eleBankName1=reader.data[i]['业主开户行'],  # 电费业主开户行1
+    #                                     eleBankAccountNo1=reader.data[i]['业主账号'],  # 电费业主账号1
+    #                                     rentAccountName1=reader.data[i]['业主户名'],  # 房租业主账户户名1
+    #                                     rentBankName1=reader.data[i]['业主开户行'],  # 房租业主开户行1
+    #                                     rentBankAccountNo1=reader.data[i]['业主账号']  # 房租业主账号1
+    #                                     )
+    # sleep(1)
+    # ContractMPage(driver).payment_plan(amount)
     sleep(1)
-    ContractMPage(driver).payment_plan(amount)
+    ContractMPage(driver).upImgs(
+        tenementsname=reader.data[i]['基站名称'],
+        contactname='A',
+        imgspath=r'C:/Users/admin/PycharmProjects/wy/wy_dh/data/contact.jpg'
+    )

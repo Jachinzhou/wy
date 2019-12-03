@@ -46,7 +46,7 @@ if __name__ == '__main__':
                             title='物业管理测试报告',
                             description='环境 :windows 10 浏览器:chrome')
     discover = unittest.defaultTestLoader.discover('./wy_dh/test_case',
-                                                   pattern='ContractM_sta.py')
+                                                   pattern='addContract_sta.py')
     runner.run(discover)
     fp.close()
     file_path = new_report('./wy_dh/report')
