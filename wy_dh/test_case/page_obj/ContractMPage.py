@@ -361,8 +361,6 @@ class ContractMPage(Page):
         sleep(2)
         self.alert_accprt()
 
-        amount = '1'
-
     def payment_plan(self, amount):
         self.selected_contract()
         self.edit_contracts()
@@ -387,8 +385,8 @@ if __name__ == '__main__':
                                         catalog=reader.data[0]['合同分类2'],  # 合同分类2
                                         startTime=reader.data[0]['合同起时间'],  # 合同起时间
                                         endTime=reader.data[0]['合同止时间'],  # 合同止时间
-                                        useStartTime=reader.data[0]['租金首次支付开始时间'],   # 租金首次支付开始时间
-                                        useEndTime=reader.data[0]['租金首次支付结束时间'],   # 租金首次支付结束时间
+                                        useStartTime=reader.data[0]['租金首次支付开始时间'],  # 租金首次支付开始时间
+                                        useEndTime=reader.data[0]['租金首次支付结束时间'],  # 租金首次支付结束时间
                                         tenements_name=reader.data[0]['基站名称'],  # 基站名称
                                         tenements_address='地址',
                                         tenements_contact='联系人张三',
