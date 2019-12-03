@@ -59,4 +59,4 @@ class ExcelReader:
 if __name__ == '__main__':
     e = 'C:/Users/admin/PycharmProjects/wy/wy_dh/data/合同台账2019-12-02.xlsx'
     reader = ExcelReader(e, title_line=True)
-    print(reader.data[0]['基站名称'])
+    print(reader.data[1]['基站名称'])
