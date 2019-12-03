@@ -1,3 +1,4 @@
+# coding = utf-8
 from selenium import webdriver
 from time import sleep
 import os
@@ -9,7 +10,7 @@ def insert_img(driver, file_name):
     base_dir = str(base_dir)
     base_dir = base_dir.replace('\\', '/')
     base = base_dir.split('/test_case')[0]
-    file_path = base + '/report/image' + file_name
+    file_path = base + '/report/image/' + file_name
     driver.get_screenshot_as_file(file_path)
 
 
@@ -22,12 +23,10 @@ if __name__ == '__main__':
         driver.find_element_by_id('password').send_keys('')
         driver.find_element_by_id('loginSub').click()
         sleep(1)
+        driver.switch_to.alert
         insert_img(driver, 'alert.png')
         sleep(1)
         driver.switch_to.alert.accept()
         driver.quit()
     except Exception as msg:
-        insert_img(driver, 'alert.png')
         print(1)
-
-

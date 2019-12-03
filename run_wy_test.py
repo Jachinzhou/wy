@@ -7,17 +7,39 @@ import time
 import os
 
 
-def new_report(testreport):
-    lists = os.listdir(testreport)
-    lists.sort(key=lambda fn: os.path.getmtime(testreport + '\\' + fn))
-    file_new = os.path.join(testreport, lists[-1])
+def send_mail(file_new):
+    f = open(file_new, 'rb')
+    mail_body = f.read()
+    f.close()
+
+    msg = MIMEText(mail_body, 'html', 'utf-8')
+    msg['subject'] = Header('测试报告', 'utf-8')
+    from_addr = '2273937910@qq.com'  # 邮件发送账号
+    to_addrs = '1587739993@qq.com'  # 接收邮件账号
+    qqCode = 'mgyqummajfirdifi'  # 授权码（这个要填自己获取到的）
+    smtp_server = 'smtp.qq.com'  # 固定写死
+    smtp_port = 465  # 固定端口
+
+    # 配置服务器
+    stmp = smtplib.SMTP_SSL(smtp_server, smtp_port)
+    stmp.login(from_addr, qqCode)
+    stmp.sendmail('2273937910@qq.com', '1587739993@qq.com', msg.as_string())
+    stmp.quit()
+    print('email has send out !')
+
+
+def new_report(report):
+    lists = os.listdir(report)
+    lists.sort(key=lambda fn: os.path.getmtime(report + '\\' + fn))
+    file_new = os.path.join(report, lists[-1])
     # print(file_new)
     return file_new
 
 
 if __name__ == '__main__':
+    report = 'C:/Users/admin/PycharmProjects/wy/wy_dh/report'
     now = time.strftime('%Y-%m-%d-%H_%M_%S')
-    filename = './' + now + ' result.html'
+    filename = report + '\\' + now + '_result.html'
     fp = open(filename, 'wb')
     runner = HTMLTestRunner(stream=fp,
                             title='物业管理测试报告',
@@ -27,3 +49,6 @@ if __name__ == '__main__':
     runner.run(discover)
     fp.close()
     file_path = new_report('./wy_dh/report')
+
+    # new_report = new_report(report)
+    # send_mail(new_report)

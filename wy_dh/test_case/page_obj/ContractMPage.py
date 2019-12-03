@@ -3,6 +3,7 @@ from selenium.webdriver.support.select import Select
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from wy_dh.test_case.page_obj.base import Page
+from wy_dh.test_case.models.DataLoad import *
 from time import sleep
 
 
@@ -305,7 +306,6 @@ class ContractMPage(Page):
         self.input_receiveDate(receiveDate)
         self.remove_readonly("signDate")
         self.input_signDate(signDate)
-        sleep(2)
         self.input_deposit(deposit)
         self.input_partyA(partyA)
         self.input_partyB(partyB)
@@ -313,6 +313,14 @@ class ContractMPage(Page):
         self.select_classification(classification)
         self.input_area(area)
         self.select_followPerson(followPerson)
+        if catalog == '房租':
+            print('不输入电费费率和周期')
+        elif catalog == '电费':
+            self.input_electricityFeeRate(electricityFeeRate)
+            self.input_electricityFeeCycle(electricityFeeCycle)
+        elif catalog == '房租+电费':
+            self.input_electricityFeeRate(electricityFeeRate)
+            self.input_electricityFeeCycle(electricityFeeCycle)
         self.select_account_tab()
         sleep(1)
         self.input_contact(contact)
@@ -332,10 +340,12 @@ class ContractMPage(Page):
             self.input_eleAccountName1(eleAccountName1)
             self.input_eleBankName1(eleBankName1)
             self.input_eleBankAccountNo1(eleBankAccountNo1)
-        self.add_contracts()
+        # self.contract_submit()
 
 
 if __name__ == '__main__':
+    e = 'C:/Users/admin/PycharmProjects/wy/wy_dh/data/合同台账2019-12-02.xlsx'
+    reader = ExcelReader(e, title_line=True)
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get('http://wy.dhwl66.com:8001/dhwy/passport/login')
@@ -344,14 +354,14 @@ if __name__ == '__main__':
     driver.find_element_by_id('loginSub').click()
     sleep(1)
     driver.get('http://wy.dhwl66.com:8001/dhwy/contracts/load')
-    ContractMPage(driver).add_contracts(code='合同编号',
-                                        oldCode='原合同编号',
-                                        catalog='房租',
-                                        startTime='2019-07-01',
-                                        endTime='2021-06-30',
-                                        useStartTime='2019-07-01',
-                                        useEndTime='2020-06-30',
-                                        tenements_name='基站名称',
+    ContractMPage(driver).add_contracts(code=reader.data[0]['东恒-业主合同编号'],  # 合同编号
+                                        oldCode=reader.data[0]['原合同编号'],  # 原合同编号
+                                        catalog=reader.data[0]['合同分类2'],  # 合同分类2
+                                        startTime=reader.data[0]['合同起时间'],  # 合同起时间
+                                        endTime=reader.data[0]['合同止时间'],  # 合同止时间
+                                        useStartTime=reader.data[0]['租金首次支付开始时间'],   # 租金首次支付开始时间
+                                        useEndTime=reader.data[0]['租金首次支付结束时间'],   # 租金首次支付结束时间
+                                        tenements_name=reader.data[0]['基站名称'],  # 基站名称
                                         tenements_address='地址',
                                         tenements_contact='联系人张三',
                                         tenements_mobile='15369585545',
