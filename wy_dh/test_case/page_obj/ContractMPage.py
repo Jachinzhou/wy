@@ -4,7 +4,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from wy_dh.test_case.page_obj.base import Page
 from wy_dh.test_case.models.DataLoad import *
+from wy_dh.test_case.models import function
 from time import sleep
+import random
 
 
 class ContractMPage(Page):
@@ -36,7 +38,7 @@ class ContractMPage(Page):
     wy_tenements_payPurpose_loc = (By.NAME, 'tenements_payPurpose')  # 基站缩略名称
     wy_tenements_memo_loc = (By.NAME, 'tenements_memo')  # 备注
     wy_tenements_Submit_loc = (By.XPATH, '(//*[@id="Submit"])[2]')  # 物业单位提交按钮
-    wy_selected_row_loc = (By.XPATH, '//*[@id="tenementsDataTable"]/tbody/tr[1]')  # 选择物业单位
+    wy_selected_tenements_loc = (By.XPATH, '//*[@id="tenementsDataTable"]/tbody/tr[1]')  # 选择物业单位列表第一个
     wy_selected_button_loc = (
         By.XPATH, '//*[@id="popwnd_tenements_getTenements"]/div[2]/div[2]/div/div[2]/button')  # 选择按钮
 
@@ -72,7 +74,11 @@ class ContractMPage(Page):
     wy_rentBankAccountNo1_loc = (By.NAME, 'rentBankAccountNo1')  # 房租业主账号1
     wy_rentRatio1_loc = (By.NAME, 'rentRatio1')  # 房租分账比例1
 
-    wy_Submit_loc = (By.NAME, 'Submit')  # 合同提交按钮
+    wy_Submit_loc = (By.XPATH, '//*[@id="Submit"]')  # 合同提交按钮
+
+    wy_selected_contract_loc = (By.XPATH, '//*[@id="contractsDataTable"]/tbody/tr[1]')  # 选择合同列表第一个
+    wy_edit_contracts_loc = (By.XPATH, '/html/body/div[3]/div/div[2]/button[15]')  # 合同编辑按钮
+    wy_payment_plan_tab_loc = (By.XPATH, '//*[@id="tabs"]/ul/li[4]/a')  # 合同付款计划tab
 
     def add_contracts_button(self):
         self.find_element(*self.wy_lfn_add_contracts_loc).click()
@@ -122,8 +128,8 @@ class ContractMPage(Page):
     def add_tenements(self):
         self.find_element(*self.wy_tenements_Submit_loc).click()
 
-    def selected_row(self):
-        self.find_element(*self.wy_selected_row_loc).click()
+    def selected_tenements(self):
+        self.find_element(*self.wy_selected_tenements_loc).click()
 
     def select_button(self):
         self.find_element(*self.wy_selected_button_loc).click()
@@ -215,6 +221,15 @@ class ContractMPage(Page):
     def contract_submit(self):
         self.find_element(*self.wy_Submit_loc).click()
 
+    def selected_contract(self):
+        self.find_element(*self.wy_selected_contract_loc).click()
+
+    def edit_contracts(self):
+        self.find_element(*self.wy_edit_contracts_loc).click()
+
+    def payment_plan_click(self):
+        self.find_element(*self.wy_payment_plan_tab_loc).click()
+
     # wy_account_tab_loc = (By.LINK_TEXT, '业主账户信息')  # 业主账户信息
     # wy_contact_loc = (By.NAME, 'contact')  # 出租方联系人
     # wy_mobile_loc = (By.NAME, 'mobile')  # 联系电话
@@ -226,6 +241,7 @@ class ContractMPage(Page):
     # wy_rentBankName1_loc = (By.NAME, 'rentBankName1')  # 房租业主开户行1
     # wy_rentBankAccountNo1_loc = (By.NAME, 'rentBankAccountNo1')  # 房租业主账号1
     # wy_rentRatio1_loc = (By.NAME, 'rentRatio1')  # 房租分账比例1
+    # 添加合同
     def add_contracts(self,
                       code='code',
                       oldCode='oldCode',
@@ -280,7 +296,6 @@ class ContractMPage(Page):
         self.input_useStartTime(useStartTime)
         self.remove_readonly("useEndTime")
         self.input_useEndTime(useEndTime)
-        sleep(1)
         self.add_tenementName()
         # 添加基站
         # sleep(1)
@@ -294,7 +309,7 @@ class ContractMPage(Page):
         # self.add_tenements()
         # sleep(1)
         # self.alert_accprt()
-        self.selected_row()
+        self.selected_tenements()
         sleep(1)
         self.select_button()
         self.input_signatory(signatory)
@@ -306,6 +321,7 @@ class ContractMPage(Page):
         self.input_receiveDate(receiveDate)
         self.remove_readonly("signDate")
         self.input_signDate(signDate)
+        sleep(2)
         self.input_deposit(deposit)
         self.input_partyA(partyA)
         self.input_partyB(partyB)
@@ -313,14 +329,15 @@ class ContractMPage(Page):
         self.select_classification(classification)
         self.input_area(area)
         self.select_followPerson(followPerson)
-        if catalog == '房租':
-            print('不输入电费费率和周期')
-        elif catalog == '电费':
+        if catalog == '电费':
             self.input_electricityFeeRate(electricityFeeRate)
             self.input_electricityFeeCycle(electricityFeeCycle)
         elif catalog == '房租+电费':
             self.input_electricityFeeRate(electricityFeeRate)
             self.input_electricityFeeCycle(electricityFeeCycle)
+        elif catalog == '房租':
+            print('房租合同不需要输入电费费率和周期')
+        # 业主账户信息
         self.select_account_tab()
         sleep(1)
         self.input_contact(contact)
@@ -340,12 +357,23 @@ class ContractMPage(Page):
             self.input_eleAccountName1(eleAccountName1)
             self.input_eleBankName1(eleBankName1)
             self.input_eleBankAccountNo1(eleBankAccountNo1)
-        # self.contract_submit()
+        self.contract_submit()
+        sleep(2)
+        self.alert_accprt()
+
+        amount = '1'
+
+    def payment_plan(self, amount):
+        self.selected_contract()
+        self.edit_contracts()
+        self.payment_plan_click()
+        function.insert_img(self.driver, 'payment_plan_' + amount + '.png')
 
 
 if __name__ == '__main__':
     e = 'C:/Users/admin/PycharmProjects/wy/wy_dh/data/合同台账2019-12-02.xlsx'
     reader = ExcelReader(e, title_line=True)
+    amount = '1'
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get('http://wy.dhwl66.com:8001/dhwy/passport/login')
@@ -394,3 +422,5 @@ if __name__ == '__main__':
                                         rentBankName1='农业银行深圳龙岗支行',
                                         rentBankAccountNo1='6228480120631299316'
                                         )
+    sleep(1)
+    ContractMPage(driver).payment_plan(amount)

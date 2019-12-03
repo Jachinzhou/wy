@@ -36,6 +36,7 @@ def new_report(report):
     return file_new
 
 
+
 if __name__ == '__main__':
     report = 'C:/Users/admin/PycharmProjects/wy/wy_dh/report'
     now = time.strftime('%Y-%m-%d-%H_%M_%S')
@@ -45,7 +46,7 @@ if __name__ == '__main__':
                             title='物业管理测试报告',
                             description='环境 :windows 10 浏览器:chrome')
     discover = unittest.defaultTestLoader.discover('./wy_dh/test_case',
-                                                   pattern='*_sta.py')
+                                                   pattern='ContractM_sta.py')
     runner.run(discover)
     fp.close()
     file_path = new_report('./wy_dh/report')
