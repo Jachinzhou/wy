@@ -80,6 +80,12 @@ class ContractMPage(Page):
     wy_edit_contracts_loc = (By.XPATH, '/html/body/div[3]/div/div[2]/button[15]')  # 合同编辑按钮
     wy_payment_plan_tab_loc = (By.XPATH, '//*[@id="tabs"]/ul/li[4]/a')  # 合同付款计划tab
 
+    wy_innerCode_query_loc = (By.XPATH, '//*[@id="queryForm"]/input[1]')  # 合同名称查询框
+
+    def query_innerCode(self, innerCode):
+        self.find_element(*self.wy_innerCode_query_loc).clear()
+        self.find_element(*self.wy_innerCode_query_loc).send_keys(innerCode)
+
     wy_tenementsname_query_loc = (By.XPATH, '//*[@id="queryForm"]/input[3]')  # 基站名称查询框
 
     def query_tenementsname(self, tenementsname):
@@ -412,21 +418,26 @@ class ContractMPage(Page):
         self.close_contract()
 
     def query_contact(self,
-                      tenementsname='tenementsname',
+                      innerCode='innerCode',
                       contactname='contactname'
                       ):
-        self.query_tenementsname(tenementsname)
+        self.query_innerCode(innerCode)
         self.query_contactname(contactname)
         self.query_button()
         sleep(1)
         self.selected_contract()
 
+    def get_innerCode(xpath):
+        cls = driver.find_element_by_xpath(xpath)
+        value = cls.text
+        return value
+
     def upImgs(self,
-               tenementsname='tenementsname',
+               innerCode='innerCode',
                contactname='contactname',
                imgspath='imgspath'
                ):
-        self.query_tenementsname(tenementsname)
+        self.query_innerCode(innerCode)
         self.query_contactname(contactname)
         self.query_button()
         sleep(1)
@@ -443,10 +454,10 @@ class ContractMPage(Page):
         self.close_contract()
 
     def AtoB(self,
-             tenementsname='tenementsname',
+             innerCode='innerCode',
              contactname='contactname',
              ):
-        self.query_contact(tenementsname, contactname)
+        self.query_contact(innerCode, contactname)
         self.edit_contracts()
         sleep(1)
         self.contract_status()
@@ -455,20 +466,20 @@ class ContractMPage(Page):
         self.alert_accprt()
 
     def return_contracts(self,
-                         tenementsname='tenementsname',
+                         innerCode='innerCode',
                          contactname='contactname',
                          ):
-        self.query_contact(tenementsname, contactname)
+        self.query_contact(innerCode, contactname)
         self.contract_return()
         self.contract_submit()
         sleep(1)
         self.alert_accprt()
 
     def contact_pass(self,
-                     tenementsname='tenementsname',
+                     innerCode='innerCode',
                      contactname='contactname',
                      ):
-        self.query_contact(tenementsname, contactname)
+        self.query_contact(innerCode, contactname)
         self.edit_contracts()
         sleep(1)
         self.contract_status()
@@ -531,25 +542,27 @@ if __name__ == '__main__':
                                         rentBankAccountNo1=reader.data[i]['业主账号']  # 房租业主账号1
                                         )
     sleep(1)
-    ContractMPage(driver).payment_plan(amount)
+    innerCode = ContractMPage.get_innerCode('//*[@id="contractsDataTable"]/tbody/tr[1]/td[1]')
+    sleep(1)
+    #ContractMPage(driver).payment_plan(amount)
     # ContractMPage(driver).upImgs(
     #     tenementsname=reader.data[i]['基站名称'],
     #     contactname='A',
     #     imgspath=r'C:/Users/admin/PycharmProjects/wy/wy_dh/data/contact.jpg'
     # )
-    # 生成B合同
+    #生成B合同
     ContractMPage(driver).AtoB(
-        tenementsname=reader.data[i]['基站名称'],
+        innerCode=innerCode,
         contactname='A',
     )
     # 回访
     ContractMPage(driver).return_contracts(
-        tenementsname=reader.data[i]['基站名称'],
+        innerCode=innerCode,
         contactname='A',
     )
     # 审核通过
     ContractMPage(driver).contact_pass(
-        tenementsname=reader.data[i]['基站名称'],
+        innerCode=innerCode,
         contactname='A',
     )
     driver.quit()

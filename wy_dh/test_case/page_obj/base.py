@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import time
 
 
 class Page(object):
@@ -23,7 +24,7 @@ class Page(object):
     def _open(self, url):
         url = self.base_url + url
         self.driver.get(url)
-        #print(url)
+        # print(url)
         # assert self.on_page(), 'Did not land on %s' % url
 
     # 重写元素定位方法
@@ -64,5 +65,7 @@ class Page(object):
         return text
 
 
+
+
 if __name__ == '__main__':
-    Page.remove_readonly(webdriver, 'startTime')
+    pass
