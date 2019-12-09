@@ -12,7 +12,8 @@ from dateutil.relativedelta import relativedelta
 
 
 class DayCheckPage(Page):
-    select_daycheckrows_loc = (By.XPATH, '//*[@id="dayreadmeterDataTable"]/tbody/tr[1]')  # 选择物业单位列表第一个
+    url = '/day/load'
+    select_daycheckrows_loc = (By.XPATH, '//*[@id="dayreadmeterDataTable"]/tbody/tr[1]')  # 选择抄表列表第一个
 
     def select_daycheckrows(self):
         self.find_element(*self.select_daycheckrows_loc).click()
@@ -106,8 +107,7 @@ if __name__ == '__main__':
     # DayCheckPage(driver).submit()
     # sleep(1)
     # DayCheckPage(driver).alert_accprt()
-    # DayCheckPage(driver).day_check(imgpath)
-    # driver.quit()
 
-    text = DayCheckPage.get_values('//*[@id="dayreadmeterDataTable"]/tbody/tr[1]/td[1]')
-    print(text)
+
+    DayCheckPage(driver).day_check(imgpath)
+    driver.quit()

@@ -91,6 +91,7 @@ class ContractMPage(Page):
     def query_tenementsname(self, tenementsname):
         self.find_element(*self.wy_tenementsname_query_loc).clear()
         self.find_element(*self.wy_tenementsname_query_loc).send_keys(tenementsname)
+
     wy_contactname_query_loc = (By.XPATH, '//*[@id="queryForm"]/input[5]')  # 合同名称查询框
 
     def query_contactname(self, contactname):
@@ -126,6 +127,16 @@ class ContractMPage(Page):
 
     def contract_return(self):
         self.find_element(*self.wy_contract_return_loc).click()
+
+    wy_getinnercode_loc = (By.XPATH, '//*[@id="contractsDataTable"]/tbody/tr[1]/td[1]')  # 合同管理列表第一行合同档案号
+
+    def innerCode(self):
+        cls = self.find_element(*self.wy_getinnercode_loc).text
+        return cls
+
+    def get_innerCode(self):
+        innerCode = self.innerCode()
+        return innerCode
 
     def add_contracts_button(self):
         self.find_element(*self.wy_lfn_add_contracts_loc).click()
@@ -427,11 +438,6 @@ class ContractMPage(Page):
         sleep(1)
         self.selected_contract()
 
-    def get_innerCode(xpath):
-        cls = driver.find_element_by_xpath(xpath)
-        value = cls.text
-        return value
-
     def upImgs(self,
                innerCode='innerCode',
                contactname='contactname',
@@ -475,13 +481,31 @@ class ContractMPage(Page):
         sleep(1)
         self.alert_accprt()
 
-    def contact_pass(self,
-                     innerCode='innerCode',
-                     contactname='contactname',
-                     ):
+    def A_contact_pass(self,
+                       innerCode='innerCode',
+                       contactname='contactname',
+                       ):
         self.query_contact(innerCode, contactname)
         self.edit_contracts()
         sleep(1)
+        self.contract_status()
+        self.alert_accprt()
+        sleep(1)
+        self.alert_accprt()
+
+    def B_contact_pass(self,
+                       innerCode='innerCode',
+                       contactname='contactname',
+                       code='code'
+                       ):
+        self.query_contact(innerCode, contactname)
+        self.edit_contracts()
+        sleep(1)
+        self.input_code(code)
+        sleep(1)
+        self.contract_submit()
+        sleep(1)
+        self.alert_accprt()
         self.contract_status()
         self.alert_accprt()
         sleep(1)
@@ -501,56 +525,56 @@ if __name__ == '__main__':
     driver.find_element_by_id('loginSub').click()
     sleep(1)
     driver.get('http://wy.dhwl66.com:8001/dhwy/contracts/load')
-    ContractMPage(driver).add_contracts(code=reader.data[i]['东恒-业主合同编号'] + str(random.randint(000, 999)),  # 合同编号
-                                        oldCode=reader.data[i]['原合同编号'],  # 原合同编号
-                                        catalog=reader.data[i]['合同分类2'],  # 合同分类2
-                                        startTime=reader.data[i]['合同起时间'],  # 合同起时间
-                                        endTime=reader.data[i]['合同止时间'],  # 合同止时间
-                                        useStartTime=reader.data[i]['租金首次支付开始时间'],  # 租金首次支付开始时间
-                                        useEndTime=reader.data[i]['租金首次支付结束时间'],  # 租金首次支付结束时间
-                                        tenements_name=reader.data[i]['基站名称'],  # 基站名称
-                                        tenements_address=reader.data[i]['租赁地址'],  # 地址
-                                        tenements_contact=reader.data[i]['出租方联系人'],  # 联系人
-                                        tenements_mobile=reader.data[i]['联系电话'],  # 电话
-                                        tenements_payPurpose=reader.data[i]['基站缩略名称'],  # 基站名称缩略名
-                                        signatory='签订人',  # 签订人
-                                        annualAmount=reader.data[i]['业主合同金额(元/年)'],  # 合同年金额
-                                        firstRent=reader.data[i]['业主租金首次支付金额'],  # 首次支付金额
-                                        rentCycle=reader.data[i]['业主租金后续支付周期（月）'],  # 后续支付周期
-                                        firstCycle=reader.data[i]['租金首次支付周期（月)'],  # 首次支付周期
-                                        receiveDate=reader.data[i]['收单日期'],  # 收单日期
-                                        signDate=reader.data[i]['A合同签订时间'],  # 签订日期
-                                        rent=reader.data[i]['业主合同总金额'],  # 合同总金额
-                                        deposit=reader.data[i]['押金'],  # 押金
-                                        partyA=reader.data[i]['出租方'],  # 甲方
-                                        partyB='',  # 乙方
-                                        partyC='',  # 丙方
-                                        classification=reader.data[i]['业主分类'],  # 对公对私类别
-                                        coefficient='',  # 租金转化系数
-                                        area=reader.data[i]['面积'],  # 面积
-                                        followPerson=reader.data[i]['跟进人'],  # 跟进人
-                                        memo=reader.data[i]['A合同备注'],  # 备注
-                                        electricityFeeRate=reader.data[i]['业主电费费率（元/度）'],  # 电费费率
-                                        electricityFeeCycle=reader.data[i]['电费缴费周期（月）'],  # 电费的缴费周期
-                                        contact=reader.data[i]['出租方联系人'],  # 出租方联系人
-                                        mobile=reader.data[i]['联系电话'],  # 联系电话
-                                        eleAccountName1=reader.data[i]['业主户名'],  # 电费业主账户户名1
-                                        eleBankName1=reader.data[i]['业主开户行'],  # 电费业主开户行1
-                                        eleBankAccountNo1=reader.data[i]['业主账号'],  # 电费业主账号1
-                                        rentAccountName1=reader.data[i]['业主户名'],  # 房租业主账户户名1
-                                        rentBankName1=reader.data[i]['业主开户行'],  # 房租业主开户行1
-                                        rentBankAccountNo1=reader.data[i]['业主账号']  # 房租业主账号1
-                                        )
+    # ContractMPage(driver).add_contracts(code=reader.data[i]['东恒-业主合同编号'] + str(random.randint(000, 999)),  # 合同编号
+    #                                     oldCode=reader.data[i]['原合同编号'],  # 原合同编号
+    #                                     catalog=reader.data[i]['合同分类2'],  # 合同分类2
+    #                                     startTime=reader.data[i]['合同起时间'],  # 合同起时间
+    #                                     endTime=reader.data[i]['合同止时间'],  # 合同止时间
+    #                                     useStartTime=reader.data[i]['租金首次支付开始时间'],  # 租金首次支付开始时间
+    #                                     useEndTime=reader.data[i]['租金首次支付结束时间'],  # 租金首次支付结束时间
+    #                                     tenements_name=reader.data[i]['基站名称'],  # 基站名称
+    #                                     tenements_address=reader.data[i]['租赁地址'],  # 地址
+    #                                     tenements_contact=reader.data[i]['出租方联系人'],  # 联系人
+    #                                     tenements_mobile=reader.data[i]['联系电话'],  # 电话
+    #                                     tenements_payPurpose=reader.data[i]['基站缩略名称'],  # 基站名称缩略名
+    #                                     signatory='签订人',  # 签订人
+    #                                     annualAmount=reader.data[i]['业主合同金额(元/年)'],  # 合同年金额
+    #                                     firstRent=reader.data[i]['业主租金首次支付金额'],  # 首次支付金额
+    #                                     rentCycle=reader.data[i]['业主租金后续支付周期（月）'],  # 后续支付周期
+    #                                     firstCycle=reader.data[i]['租金首次支付周期（月)'],  # 首次支付周期
+    #                                     receiveDate=reader.data[i]['收单日期'],  # 收单日期
+    #                                     signDate=reader.data[i]['A合同签订时间'],  # 签订日期
+    #                                     rent=reader.data[i]['业主合同总金额'],  # 合同总金额
+    #                                     deposit=reader.data[i]['押金'],  # 押金
+    #                                     partyA=reader.data[i]['出租方'],  # 甲方
+    #                                     partyB='',  # 乙方
+    #                                     partyC='',  # 丙方
+    #                                     classification=reader.data[i]['业主分类'],  # 对公对私类别
+    #                                     coefficient='',  # 租金转化系数
+    #                                     area=reader.data[i]['面积'],  # 面积
+    #                                     followPerson=reader.data[i]['跟进人'],  # 跟进人
+    #                                     memo=reader.data[i]['A合同备注'],  # 备注
+    #                                     electricityFeeRate=reader.data[i]['业主电费费率（元/度）'],  # 电费费率
+    #                                     electricityFeeCycle=reader.data[i]['电费缴费周期（月）'],  # 电费的缴费周期
+    #                                     contact=reader.data[i]['出租方联系人'],  # 出租方联系人
+    #                                     mobile=reader.data[i]['联系电话'],  # 联系电话
+    #                                     eleAccountName1=reader.data[i]['业主户名'],  # 电费业主账户户名1
+    #                                     eleBankName1=reader.data[i]['业主开户行'],  # 电费业主开户行1
+    #                                     eleBankAccountNo1=reader.data[i]['业主账号'],  # 电费业主账号1
+    #                                     rentAccountName1=reader.data[i]['业主户名'],  # 房租业主账户户名1
+    #                                     rentBankName1=reader.data[i]['业主开户行'],  # 房租业主开户行1
+    #                                     rentBankAccountNo1=reader.data[i]['业主账号']  # 房租业主账号1
+    #                                     )
     sleep(1)
-    innerCode = ContractMPage.get_innerCode('//*[@id="contractsDataTable"]/tbody/tr[1]/td[1]')
+    innerCode = ContractMPage(driver).get_innerCode()
     sleep(1)
-    #ContractMPage(driver).payment_plan(amount)
+    # ContractMPage(driver).payment_plan(amount)
     # ContractMPage(driver).upImgs(
     #     tenementsname=reader.data[i]['基站名称'],
     #     contactname='A',
     #     imgspath=r'C:/Users/admin/PycharmProjects/wy/wy_dh/data/contact.jpg'
     # )
-    #生成B合同
+    # 生成B合同
     ContractMPage(driver).AtoB(
         innerCode=innerCode,
         contactname='A',
@@ -561,7 +585,7 @@ if __name__ == '__main__':
         contactname='A',
     )
     # 审核通过
-    ContractMPage(driver).contact_pass(
+    ContractMPage(driver).A_contact_pass(
         innerCode=innerCode,
         contactname='A',
     )
