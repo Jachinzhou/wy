@@ -58,13 +58,16 @@ class Page(object):
         return self.driver.execute_script(js)
 
     def alert_accprt(self):
-        alert = self.driver.switch_to_alert()
+        alert = self.driver.switch_to.alert
         text = alert.text
         # print(text)
         alert.accept()
         return text
 
-
+    def open_other_windowns(self, other_windowns_url, i):
+        self.driver.execute_script("window.open('" + other_windowns_url + "')")
+        time.sleep(1)
+        self.driver.switch_to.window(self.driver.window_handles[i])  # 切换到新打开的窗口
 
 
 if __name__ == '__main__':

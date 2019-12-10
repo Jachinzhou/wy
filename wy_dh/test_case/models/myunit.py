@@ -17,7 +17,7 @@ class MyTest(unittest.TestCase):
         self.driver.execute_script("window.open('http://wy.dhwl66.com:8001/dhwy/contracts/load')")
         self.driver.get('http://wy.dhwl66.com:8001/dhwy/contracts/load')
         # print(self.driver.window_handles)  # 打印当前所有窗口
-        self.driver.switch_to_window(self.driver.window_handles[1])  # 切换到新打开的窗口
+        self.driver.switch_to.window(self.driver.window_handles[1])  # 切换到新打开的窗口
         sleep(2)
 
     def tearDown(self):

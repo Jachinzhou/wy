@@ -13,7 +13,21 @@ from dateutil.relativedelta import relativedelta
 
 class DayCheckPage(Page):
     url = '/day/load'
-    select_daycheckrows_loc = (By.XPATH, '//*[@id="dayreadmeterDataTable"]/tbody/tr[1]')  # 选择抄表列表第一个
+
+    query_innerCode_loc = (By.XPATH, '//*[@id="innerCode"]')  # 筛选合同档案号
+
+    def query_innerCode(self, innerCode):
+        self.find_element(*self.query_innerCode_loc).clear()
+        self.find_element(*self.query_innerCode_loc).send_keys(innerCode)
+
+    query_button_loc = (By.XPATH, '//*[@id="queryForm"]/input[10]')  # 筛选合同档案号
+
+    def query_button(self):
+        self.find_element(*self.query_button_loc).click()
+
+    select_daycheckrows_loc = (
+        By.XPATH,
+        '//*[@id="dayreadmeterDataTable"]/tbody/tr[1]')  # 选择抄表列表第一个 //*[@id="dayreadmeterDataTable"]/tbody/tr[1]
 
     def select_daycheckrows(self):
         self.find_element(*self.select_daycheckrows_loc).click()
@@ -50,8 +64,8 @@ class DayCheckPage(Page):
     def submit(self):
         self.find_element(*self.submit_loc).click()
 
-    def get_values(xpath):
-        cls = driver.find_element_by_xpath(xpath)
+    def get_values(self, xpath):
+        cls = self.driver.find_element_by_xpath(xpath)
         value = cls.get_attribute('value')
         return value
 
@@ -59,15 +73,20 @@ class DayCheckPage(Page):
         next_months = data + relativedelta(months=+1)
         return next_months
 
-    def day_check(self,imgpath):
+    def day_check(self,
+                  imgpath='imgpath',
+                  innerCode='innerCode'):
+        self.query_innerCode(innerCode)
+        self.query_button()
+        sleep(1)
         self.select_daycheckrows()
         self.check_button()
         sleep(1)
-        oldchecktime = DayCheckPage.get_values('//*[@id="startTime"]')
+        oldchecktime = DayCheckPage(self.driver).get_values('//*[@id="startTime"]')
         checktime = DayCheckPage.next_months(date.fromisoformat(oldchecktime))
         self.remove_readonly('endTime')
         self.input_checkendTime(str(checktime))
-        lastNumber = DayCheckPage.get_values('//*[@id="data"]/table/tbody/tr[5]/td[1]/input')
+        lastNumber = DayCheckPage(self.driver).get_values('//*[@id="data"]/table/tbody/tr[5]/td[1]/input')
         this_number = int(float(lastNumber)) + random.randint(000, 999)
         self.input_checknumber(str(this_number))
         self.elemeter_tab()
@@ -108,6 +127,5 @@ if __name__ == '__main__':
     # sleep(1)
     # DayCheckPage(driver).alert_accprt()
 
-
-    DayCheckPage(driver).day_check(imgpath)
+    DayCheckPage(driver).day_check(imgpath=imgpath, innerCode='')
     driver.quit()

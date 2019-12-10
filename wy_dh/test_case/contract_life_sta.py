@@ -6,6 +6,7 @@ import unittest, random, sys
 sys.path.append("./models")
 sys.path.append("./page_obj")
 from wy_dh.test_case.models import myunit, function
+from wy_dh.test_case.page_obj.TenementsPage import *
 from wy_dh.test_case.page_obj.ContractMPage import *
 from wy_dh.test_case.page_obj.DayCheckPage import *
 from wy_dh.test_case.page_obj.loginPage import login
@@ -77,9 +78,25 @@ class ContractLife(myunit.MyTest):
         #     innerCode=innerCode,
         #     contactname='A',
         # )
-        # B合同审核通过
-        ContractMPage(self.driver).B_contact_pass(
-            innerCode=innerCode,
-            contactname='B',
-            code=reader.data[i]['东恒-铁通合同编号'] + str(random.randint(000, 999))
-        )
+        # # B合同审核通过
+        # ContractMPage(self.driver).B_contact_pass(
+        #     innerCode=innerCode,
+        #     contactname='B',
+        #     code=reader.data[i]['东恒-铁通合同编号'] + str(random.randint(000, 999))
+        # )
+        #
+        # # 基站电表信息 添加电表
+        # other_windowns_url_2 = 'http://wy.dhwl66.com:8001/dhwy/tenements/load'
+        # TenementsPage(self.driver).open_other_windowns(other_windowns_url_2, 2)
+        # TenementsPage(self.driver).add_tenementammeters(innerCode=innerCode,
+        #                                                 chinaCode=str(random.randint(0000000000, 9999999999)),
+        #                                                 chinaMobileInitNumber=str(random.randint(0000, 9999)),
+        #                                                 lastNumber=str(random.randint(000, 999)),
+        #                                                 lastCheckoutDate=reader.data[i]['合同起时间'],
+        #                                                 ratio='1'
+        #                                                 )
+
+        # 新增抄表中查表
+        other_windowns_url_3 = 'http://wy.dhwl66.com:8001/dhwy/day/load'
+        TenementsPage(self.driver).open_other_windowns(other_windowns_url_3, 2)
+        DayCheckPage(self.driver).day_check(imgpath, innerCode)
