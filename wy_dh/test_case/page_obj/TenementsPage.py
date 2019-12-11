@@ -95,6 +95,7 @@ class TenementsPage(Page):
                              ):
         self.query_incode(innerCode)
         self.query_button()
+        sleep(1)
         self.select_tenements()
         self.ammeters_edit_button()
         self.add_tenementammeters_button()

@@ -21,4 +21,5 @@ class MyTest(unittest.TestCase):
         sleep(2)
 
     def tearDown(self):
+        sleep(3)
         self.driver.quit()

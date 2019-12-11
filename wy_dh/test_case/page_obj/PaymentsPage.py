@@ -4,9 +4,11 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from wy_dh.test_case.page_obj.base import Page
 from wy_dh.test_case.models.DataLoad import *
+from wy_dh.test_case.page_obj.DayCheckPage import *
 from wy_dh.test_case.models import function
 from time import sleep
 import random
+import re
 
 
 class PaymentsPage(Page):
@@ -68,32 +70,88 @@ class PaymentsPage(Page):
     def payments_pass_button(self):
         self.find_element(*self.payments_pass_button_loc).click()
 
+    query_number_loc = (By.XPATH, '//*[@id="pagenation"]/div[2]')  # 查询列表项数及页数
+
+    def query_number(self):
+        text = self.find_element(*self.query_number_loc).get_attribute("innerHTML")
+        counts = re.findall(r'\d+', text)
+        print(counts[0])
+        return counts[0]
+
+    # 审核通过
     def payments_pass(self, innerCode='innerCode'):
         self.query_incode(innerCode)
         self.query_payments_status('等待审核')
         self.query_button()
         sleep(1)
-        self.select_tenements()
-        self.payments_edit_button()
-        self.payments_pass_button()
+        counts = int(self.query_number())
+        i = 0
+        while counts > i:
+            sleep(1)
+            self.select_tenements()
+            self.payments_edit_button()
+            self.payments_pass_button()
+            sleep(1)
+            self.alert_accprt()
+            sleep(1)
+            self.alert_accprt()
+            i += 1
+
+    export_payments_button_loc = (By.XPATH, '/html/body/div[2]/div[2]/button[5]')  # 导出付款批次按钮
+
+    def export_payments_button(self):
+        self.find_element(*self.export_payments_button_loc).click()
+
+    export_query_incode_loc = (By.XPATH, '//*[@id="searchForm"]/input[3]')  # 导出付款批次查询合同档案号
+
+    def export_query_incode(self, innerCode):
+        self.find_element(*self.export_query_incode_loc).clear()
+        self.find_element(*self.export_query_incode_loc).send_keys(innerCode)
+
+    export_query_payType_loc = (By.XPATH, '//*[@id="payType1"]')  # 查询付款状态
+
+    def export_query_payType(self, payType):
+        Select(self.find_element(*self.export_query_payType_loc)).select_by_visible_text(payType)
+
+    export_query_button_loc = (By.XPATH, '//*[@id="searchForm"]/input[10]')  # 查询按钮
+
+    def export_query_button(self):
+        self.find_element(*self.export_query_button_loc).click()
+
+    export_all_check_button_loc = (By.XPATH, '//*[@id="popwnd_Payments_export"]/div[2]/div[1]/div[2]/button[3]')  # 全选按钮
+
+    def export_all_check_button(self):
+        self.find_element(*self.export_all_check_button_loc).click()
+
+    export_button_loc = (By.XPATH, '//*[@id="popwnd_Payments_export"]/div[2]/div[1]/div[2]/button[2]')  # 导出按钮
+
+    def export_button(self):
+        self.find_element(*self.export_button_loc).click()
+
+    # 导出付款批次
+    def export_payments(self, innerCode='innerCode', payType='payType'):
+        self.export_payments_button()
+        self.export_query_incode(innerCode)
+        self.export_query_payType(payType)
+        self.export_query_button()
         sleep(1)
-        self.alert_accprt()
-        sleep(1)
-        self.alert_accprt()
-    
+        self.export_all_check_button()
+        self.export_button()
+
 
 
 if __name__ == '__main__':
     driver = webdriver.Chrome()
     driver.maximize_window()
-    driver.get('http://wy.dhwl66.com:8001/dhwy/passport/login')
-    driver.find_element_by_id('username').send_keys('周继成')
-    driver.find_element_by_id('password').send_keys('12345678')
+    driver.get('http://192.168.18.148:8080/dhwy/passport/login')
+    driver.find_element_by_id('username').send_keys('root')
+    driver.find_element_by_id('password').send_keys('123')
     driver.find_element_by_id('loginSub').click()
     sleep(1)
-    other_windowns_url = 'http://wy.dhwl66.com:8001/dhwy/payments/load'
+    other_windowns_url = 'http://192.168.18.148:8080/dhwy/payments/load'
     PaymentsPage(driver).open_other_windowns(other_windowns_url, 1)
     sleep(1)
-    PaymentsPage(driver).payments_pass('201912094048')
+    PaymentsPage(driver).export_payments(innerCode='20180907961', payType='电费')
 
+    sleep(3)
     driver.quit()
